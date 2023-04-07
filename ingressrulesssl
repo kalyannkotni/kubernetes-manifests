@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-sslcerts
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+      - kalyaan.ml
+    secretName: kalyan-ingress-tls
+  rules:
+  - host: kalyaan.ml
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/maven-web-application"
+        backend:
+          service:
+            name: mavenwebappsvc
+            port:
+             number: 80
+      - pathType: Prefix
+        path: "/java-web-app"
+        backend:
+          service:
+            name: javawebappsvc
+            port:
+              number: 80
