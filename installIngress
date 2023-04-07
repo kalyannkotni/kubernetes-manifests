@@ -1,0 +1,46 @@
+installing ingress controller in AWS - 
+---------------------------------------
+https://github.com/kubernetes/ingress-nginx.git
+
+
+1. Clone Kubernetes Nginx Ingress Manifests into server where you have kubectl
+$ git clone https://github.com/kalyannkotni/kubernetes-ingress.git
+$ cd kubernetes-ingress/deployments
+
+2. Create a Namespace And service account
+$ kubectl apply -f common/ns-and-sa.yaml
+$ kubectl get ns
+$ kubectl get all -n nginx-ingress
+
+3. Create RBAC, Default Secret And Config Map
+$ kubectl apply -f common/
+
+4. Deploy the Ingress Controller
+We include two options for deploying the Ingress controller:
+Deployment. Use a Deployment if you plan to dynamically change the number of Ingress controller replicas. we have more replicas 
+DaemonSet. Use a DaemonSet for deploying the Ingress controller on every node or a subset of nodes.
+
+4.1 Create a DaemonSet
+When you run the Ingress Controller by using a DaemonSet, Kubernetes will create an Ingress controller pod on every node of the cluster.
+$ kubectl apply -f daemon-set/nginx-ingress.yaml
+$ kubectl get all -n nginx-ingress
+
+5. Check that the Ingress Controller is Running
+Check that the Ingress Controller is Running Run the following command to make sure that the Ingress controller pods are running:
+$ kubectl get pods --namespace=nginx-ingress
+
+6. Get Access to the Ingress Controller
+If you created a daemonset, ports 80 and 443 of the Ingress controller container are mapped to the same ports of the node where the container is running. To access the Ingress controller, use those ports and an IP address of any node of the cluster where the Ingress controller is running.
+
+6.1 Service with the Type LoadBalancer
+Create a service with the type LoadBalancer. Kubernetes will allocate and configure a cloud load balancer for load balancing the Ingress controller pods.
+For AWS, run:
+$ kubectl apply -f service/loadbalancer-aws-elb.yaml
+$ kubectl get all -n nginx-ingress
+
+login into route53 map the applications to loadballancer 
+
+404 page not found - dont define the ingress rules
+502 bad gateway - service name configured wrong
+
+Define ingress rules on host based and path based routing rules.
